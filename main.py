@@ -7,12 +7,14 @@ def parse_csv(file_path):
     cocktails = []
     for index, row in df.iterrows():
         cocktails.append(Cocktail(row[column_names[0]], row[column_names[1]], row[column_names[2]], row[column_names[3]], eval(row[column_names[5]])))
-        # cocktails[0].print_info() 
+        if index > 10:
+            break
+        
 
     return cocktails
 
 file_path = 'train.csv'  
 cocktails = parse_csv(file_path)
 for cocktail in cocktails:
-    print(cocktail.name)
-    print(cocktail.ingredients[0].info())
+    cocktail.print_cocktail()
+    
