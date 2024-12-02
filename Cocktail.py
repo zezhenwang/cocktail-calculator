@@ -15,7 +15,7 @@ class Cocktail:
         for item in ingredients:
             self.ingredients.append(cocktail_ingredients(item[0], item[1]))
 
-    def print_info(self):
+    def print_cocktail(self):
         print("Name: " + self.name)
         print("Ingredients: ")
         for item in self.ingredients:
