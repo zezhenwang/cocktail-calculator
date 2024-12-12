@@ -3,11 +3,14 @@ import re
 class cocktail_ingredients:
     def __init__(self, amount, ingredient) -> None:
         self.ingredient = ingredient
-        self.amount = amount.split()[0]
-        self.unit = amount.split()[1]
-        
+        try:
+            self.amount = amount.split()[0]
+            self.unit = amount.split()[1]
+        except:
+            self.ingredient = ingredient
+            self.unit = None 
     def info(self):
-        return self.ingredient + ": " + self.amount + ' ' + self.unit
+        return self.ingredient + ": " + self.amount + ' ' + "" if not self.unit else self.unit
 
 class Cocktail:
     def __init__(self, title, glass, garnish, recipe, ingredients) -> None:
@@ -16,7 +19,7 @@ class Cocktail:
         self.garnish = garnish
         self.recipe = recipe
         self.technique = list(set(re.findall(r'\b[A-Z]{2,}\b', recipe)))
-        self.ingredients = [] # [(A, amount), (B, amount)]
+        self.ingredients = []
         for item in ingredients:
             self.ingredients.append(cocktail_ingredients(item[0], item[1]))
 
@@ -32,3 +35,7 @@ class Cocktail:
         print()
 
     
+class Cocktail_Graph:
+    
+    def __init__(self) -> None:
+        pass
