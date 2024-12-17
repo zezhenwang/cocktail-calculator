@@ -3,7 +3,7 @@ import re
 import networkx as nx
 import random
 import difflib
-import tabulate
+from tabulate import tabulate
 
 
 cocktail_techniques = [
@@ -94,6 +94,7 @@ class Cocktail:
         return len(shared_ingredients) * 3 + len(shared_techniques) # This is tested for best performance and connectedness
     
     def print_cocktail(self):
+        """Print the cocktail"""
         print(f"\nRandom Cocktail: {self.name}")
         print(f"Glass: {self.glass}")
         print(f"Garnish: {self.garnish}")
@@ -184,7 +185,8 @@ class CocktailGraph:
                 if i < j:
                     similarity = cocktail1.get_similarity(cocktail2)
                     if similarity >= self.threshold:  # Add edge only if similarity exists
-                        self.graph.add_edge(cocktail1.name, cocktail2.name, weight=1 / similarity)
+                        self.graph.add_edge(cocktail1.name, cocktail2.name, weight= 1 / similarity)
+                        # print(cocktail1.name, cocktail2.name, similarity)
 
     def find_shortest_path(self, cocktail1, cocktail2):
         """
@@ -207,6 +209,57 @@ class CocktailGraph:
             return nx.shortest_path(self.graph, source=cocktail1, target=cocktail2, weight='weight')
         except nx.NetworkXNoPath:
             return None
+        
+    def display_cocktail_difference(self, cocktail_names):
+        
+        cocktails = []
+        for name in cocktail_names:
+            if name in self.graph.nodes:
+                cocktails.append(self.graph.nodes[name]['data'])
+            else:
+                print(f"Error: '{name}' not found in the graph.")
+                return
+
+        all_ingredients = set()
+        all_techniques = set()
+        cocktail_ingredients = []
+        cocktail_techniques = []
+        
+        for cocktail in cocktails:
+            # Extract ingredients as a dictionary {ingredient: amount}
+            ingredients = {i[1]: i[0] for i in cocktail.ingredients}
+            all_ingredients.update(ingredients.keys())
+            cocktail_ingredients.append(ingredients)
+
+            # Extract techniques
+            techniques = set(cocktail.techniques)
+            all_techniques.update(techniques)
+            cocktail_techniques.append(techniques)
+
+        all_ingredients = sorted(all_ingredients)
+        all_techniques = sorted(all_techniques)
+
+        # Table construction
+        headers = ["Element"] + cocktail_names
+        table = []
+
+        table.append(["--- INGREDIENTS ---"] + [""] * len(cocktail_names))
+        for ingredient in all_ingredients:
+            row = [ingredient]
+            for i, ingredients in enumerate(cocktail_ingredients):
+                amount = ingredients.get(ingredient, "X")
+                row.append(amount)
+            table.append(row)
+
+        table.append(["--- TECHNIQUES ---"] + [""] * len(cocktail_names))
+        for technique in all_techniques:
+            row = [technique]
+            for i, techniques in enumerate(cocktail_techniques):
+                status = technique if technique in techniques else "X"
+                row.append(status)
+            table.append(row)
+
+        print(tabulate(table, headers=headers, tablefmt="grid"))
 
     def get_random_cocktail(self):
         """

@@ -1,4 +1,3 @@
-from tabulate import tabulate  
 from DataStructure import CocktailGraph
 
 def print_random_cocktail(graph):
@@ -46,71 +45,6 @@ def search_cocktail(graph, cocktail_name):
             print(f"{i}. {match}")
 
 
-def display_cocktail_difference(graph, cocktail_names):
-    """
-    Compare multiple cocktails for similarities and differences.
-
-    Displays a table showing the ingredients (with amounts) and techniques 
-    used in each cocktail. The table highlights missing elements with 'X'.
-
-    Parameters
-    ----------
-    graph : object
-        An CocktailGraph object that holds the information of the cocktail graph.
-    cocktail_names : list of str
-        A list of cocktail names to compare.
-
-    """
-    
-    cocktails = []
-    for name in cocktail_names:
-        if name in graph.graph.nodes:
-            cocktails.append(graph.graph.nodes[name]['data'])
-        else:
-            print(f"Error: '{name}' not found in the graph.")
-            return
-    
-    all_ingredients = set()
-    all_techniques = set()
-    cocktail_ingredients = []
-    cocktail_techniques = []
-    
-    for cocktail in cocktails:
-        # Extract ingredients as a dictionary {ingredient: amount}
-        ingredients = {i[1]: i[0] for i in cocktail.ingredients}
-        all_ingredients.update(ingredients.keys())
-        cocktail_ingredients.append(ingredients)
-
-        # Extract techniques
-        techniques = set(cocktail.techniques)
-        all_techniques.update(techniques)
-        cocktail_techniques.append(techniques)
-
-    all_ingredients = sorted(all_ingredients)
-    all_techniques = sorted(all_techniques)
-
-    # Table construction
-    headers = ["Element"] + cocktail_names
-    table = []
-
-    table.append(["--- INGREDIENTS ---"] + [""] * len(cocktail_names))
-    for ingredient in all_ingredients:
-        row = [ingredient]
-        for i, ingredients in enumerate(cocktail_ingredients):
-            amount = ingredients.get(ingredient, "X")
-            row.append(amount)
-        table.append(row)
-
-    table.append(["--- TECHNIQUES ---"] + [""] * len(cocktail_names))
-    for technique in all_techniques:
-        row = [technique]
-        for i, techniques in enumerate(cocktail_techniques):
-            status = technique if technique in techniques else "X"
-            row.append(status)
-        table.append(row)
-
-    print(tabulate(table, headers=headers, tablefmt="grid"))
-
 def find_shortest_path(graph, cocktail1, cocktail2):
     """
     Find and display the shortest path between two cocktails.
@@ -131,13 +65,14 @@ def find_shortest_path(graph, cocktail1, cocktail2):
     path = graph.find_shortest_path(cocktail1, cocktail2)
     if path:
         print(f"\nShortest path from '{cocktail1}' to '{cocktail2}': {' -> '.join(path)}")
-        display_cocktail_difference(graph, path)
+        graph.display_cocktail_difference(path)
     else:
         print(f"\nNo path exists between '{cocktail1}' and '{cocktail2}'.")
 
 
 def main():
-    ''''''
+    '''Main Function that controls user input/output'''
+
     print("Welcome to the Cocktail Calculator!")
     print("Loading Cocktails...")
     graph = CocktailGraph('cocktail.csv')
@@ -166,7 +101,8 @@ def main():
             if not graph.cocktail_exists(c2):
                 print("Invalid cocktail. Please try again.")
                 continue
-            display_cocktail_difference(graph, [c1, c2])
+            print(f"\nSimilarity between {c1} and {c2}: {graph.graph.nodes[c1]['data'].get_similarity(graph.graph.nodes[c2]['data'])}")
+            graph.display_cocktail_difference([c1, c2])
             
         elif choice == '3':
             c1 = input("Enter the origin cocktail name: ")
@@ -183,8 +119,14 @@ def main():
             break
         elif choice == 'debug':
             graph.print_graph_summary()
+        elif choice == 'advanced_debugging':
+            input_content = eval(input("please input commands: "))
+            input_content
         else:
             print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
     main()
+
+
+# print(graph.graph.nodes["Woodside"]['data'].get_similarity(graph.graph.nodes["Alfonso Martini"]['data']))
