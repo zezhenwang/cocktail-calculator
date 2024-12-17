@@ -1,0 +1,3 @@
+pandas==2.2.3
+networkx==3.4.2
+tableau==0.9.0
