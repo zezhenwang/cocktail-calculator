@@ -1,5 +1,5 @@
 from tabulate import tabulate  
-from cocktail_graph import CocktailGraph
+from DataStructure import CocktailGraph
 
 def print_random_cocktail(graph):
     """
