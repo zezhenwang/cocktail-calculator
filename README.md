@@ -53,8 +53,6 @@ To run this program, ensure the following Python packages are installed:
 - `pandas` (for reading and parsing data)
 - `networkx` (for building network and analyzing)
 - `tabulate` (for displaying comparison of cocktails)
-- `difflib` (for fuzzy search of cocktails)
-- `re` (for parsing data)
 
 ------
 
